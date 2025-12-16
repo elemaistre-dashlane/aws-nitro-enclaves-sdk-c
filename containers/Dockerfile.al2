@@ -1,11 +1,11 @@
 # Copyright 2020-2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 # SPDX-License-Identifier: Apache-2.0
 
-ARG BASE_IMAGE=public.ecr.aws/amazonlinux/amazonlinux:2
+ARG BASE_IMAGE=public.ecr.aws/amazonlinux/amazonlinux:2023
 
 FROM $BASE_IMAGE as builder
 
-RUN yum install -y \
+RUN dnf install -y \
 	cmake3 \
 	gcc \
 	git \
@@ -46,7 +46,7 @@ RUN git clone --depth 1 -b v0.11.0 https://github.com/awslabs/aws-c-io.git
 RUN cmake3 -DUSE_VSOCK=1 -DCMAKE_PREFIX_PATH=/usr -DBUILD_TESTING=0 -DCMAKE_INSTALL_PREFIX=/usr -GNinja -S aws-c-io -B aws-c-io/build
 RUN cmake3 --build aws-c-io/build --parallel $(nproc) --target install
 
-RUN git clone --depth 1 -b v0.2.14 http://github.com/awslabs/aws-c-compression.git
+RUN git clone --depth 1 -b v0.2.14 https://github.com/awslabs/aws-c-compression.git
 RUN cmake3 -DCMAKE_PREFIX_PATH=/usr -DBUILD_TESTING=0 -DCMAKE_INSTALL_PREFIX=/usr -GNinja -S aws-c-compression -B aws-c-compression/build
 RUN cmake3 --build aws-c-compression/build --parallel $(nproc) --target install
 
