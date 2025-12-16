@@ -5,16 +5,7 @@ ARG BASE_IMAGE=public.ecr.aws/amazonlinux/amazonlinux:2023
 
 FROM $BASE_IMAGE as builder
 
-RUN dnf install -y \
-	cmake3 \
-	gcc \
-	git \
-	tar \
-	make \
-	gcc-c++ \
-	go \
-	ninja-build \
-	doxygen
+RUN dnf install -y cmake3 gcc git tar make gcc-c++ go ninja-build doxygen
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- -y --profile minimal --default-toolchain 1.71
 
