@@ -3,7 +3,7 @@
 
 ARG BASE_IMAGE=public.ecr.aws/amazonlinux/amazonlinux:2023
 
-FROM $BASE_IMAGE as builder
+FROM $BASE_IMAGE AS builder
 
 RUN dnf install -y cmake3 gcc git tar make gcc-c++ go ninja-build doxygen
 
@@ -84,7 +84,7 @@ RUN mkdir -p /rootfs/etc/pki/tls/certs/ \
     && cp -f /etc/pki/tls/certs/* /rootfs/etc/pki/tls/certs/
 RUN find /rootfs
 
-FROM scratch as kmstool-enclave
+FROM scratch AS kmstool-enclave
 
 COPY --from=builder /rootfs /
 
@@ -95,7 +95,7 @@ ENV ENDPOINT=${ENDPOINT}
 CMD ["/usr/bin/kmstool_enclave"]
 
 # kmstool-instance
-FROM $BASE_IMAGE as kmstool-instance
+FROM $BASE_IMAGE AS kmstool-instance
 
 # TODO: building packages statically instead of cleaning up unwanted packages from amazonlinux
 RUN rpm -e python python-libs python-urlgrabber python2-rpm pygpgme pyliblzma python-iniparse pyxattr python-pycurl amazon-linux-extras yum yum-metadata-parser yum-plugin-ovl yum-plugin-priorities
@@ -104,7 +104,7 @@ COPY --from=builder /usr/bin/kmstool_instance /kmstool_instance
 CMD ["/kmstool_instance"]
 
 # kmstool-enclave-cli
-FROM $BASE_IMAGE as kmstool-enclave-cli
+FROM $BASE_IMAGE AS kmstool-enclave-cli
 
 # TODO: building packages statically instead of cleaning up unwanted packages from amazonlinux
 RUN rpm -e python python-libs python-urlgrabber python2-rpm pygpgme pyliblzma python-iniparse pyxattr python-pycurl amazon-linux-extras yum yum-metadata-parser yum-plugin-ovl yum-plugin-priorities
@@ -112,6 +112,6 @@ COPY --from=builder /usr/lib64/libnsm.so /usr/lib64/libnsm.so
 COPY --from=builder /usr/bin/kmstool_enclave_cli /kmstool_enclave_cli
 
 # Test
-FROM builder as test
+FROM builder AS test
 WORKDIR /tmp/crt-builder
 RUN cmake3 --build aws-nitro-enclaves-sdk-c/build --parallel $(nproc) --target test
